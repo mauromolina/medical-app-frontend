@@ -10,6 +10,7 @@ import {
   onSetActiveRecord,
   onUpdateRecord,
 } from "../store";
+import { format } from "date-fns";
 
 export const useCalendarStore = () => {
   const dispatch = useDispatch();
@@ -52,9 +53,7 @@ export const useCalendarStore = () => {
   const startLoadingRecords = async () => {
     try {
       const { data } = await calendarApi.get("/record");
-      console.log({ records: data.records });
       const records = normalizeRecordToDate(data.records);
-      console.log(records);
       dispatch(onLoadRecords(records));
     } catch (err) {
       console.log("Error cargando registros");

@@ -32,15 +32,12 @@ export const calendarSlice = createSlice({
       }
     },
     onLoadRecords: (state, { payload = [] }) => {
-      console.log({ payload });
       state.loadingRecords = false;
       payload.forEach((record) => {
         const exists = state.records.some(
           (dbRecord) => dbRecord.id === record.id
         );
-        console.log(exists);
         if (!exists) state.records.push(record);
-        console.log(state);
       });
     },
     onLogout: (state) => {

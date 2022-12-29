@@ -43,7 +43,6 @@ export const useAuthStore = () => {
     try {
       const { data } = await calendarApi.get("/auth/refresh-token");
       localStorage.setItem("token", data.token);
-      console.log({ data });
       dispatch(login({ name: data.user.name, uid: data.user.uid }));
     } catch (err) {
       localStorage.clear();

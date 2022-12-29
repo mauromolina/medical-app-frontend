@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { Spinner } from "../components/Spinner";
 import { useAuthStore } from "../hooks";
 import { CalendarPage, LoginPage } from "../pages";
 
@@ -11,7 +12,7 @@ const AppRouter = () => {
     checkAuthToken();
   }, []);
 
-  if (status === "checking") return <h3>Cargando...</h3>;
+  if (status === "checking") return <Spinner />;
 
   //Refactor private and public routes
 
