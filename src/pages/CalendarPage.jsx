@@ -14,7 +14,7 @@ import { useAuthStore, useCalendarStore, useUiStore } from "../hooks";
 
 export const CalendarPage = () => {
   const { user } = useAuthStore();
-  const { openDateModal } = useUiStore();
+  const { openDateModal, isDateModalOpen } = useUiStore();
   const { records, setActiveRecord, startLoadingRecords } = useCalendarStore();
   const [lastView, setLastView] = useState(
     localStorage.getItem("lastView") || "month"
@@ -63,7 +63,7 @@ export const CalendarPage = () => {
       />
       <CalendarModal />
       <FabAddNew />
-      <FabDelete />
+      {!isDateModalOpen && <FabDelete />}
     </>
   );
 };

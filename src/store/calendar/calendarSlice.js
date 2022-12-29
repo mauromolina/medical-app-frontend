@@ -16,6 +16,7 @@ export const calendarSlice = createSlice({
     },
     onAddNewRecord: (state, { payload }) => {
       state.records.push(payload);
+      state.records = state.records.sort((a, b) => a.start - b.start);
       state.activeRecord = null;
     },
     onUpdateRecord: (state, { payload }) => {

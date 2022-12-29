@@ -10,7 +10,6 @@ import {
   onSetActiveRecord,
   onUpdateRecord,
 } from "../store";
-import { format } from "date-fns";
 
 export const useCalendarStore = () => {
   const dispatch = useDispatch();
@@ -19,14 +18,13 @@ export const useCalendarStore = () => {
 
   const setActiveRecord = (calendarRecord) => {
     dispatch(onSetActiveRecord(calendarRecord));
-    setTimeout(() => {
-      dispatch(onRemoveActiveRecord());
-    }, 10000);
+    // setTimeout(() => {
+    //   dispatch(onRemoveActiveRecord());
+    // }, 10000);
   };
 
   const startSavingRecord = async (calendarRecord) => {
     try {
-      console.log({ calendarRecord, user });
       if (calendarRecord.id) {
         await calendarApi.put(`/record/${calendarRecord.id}`, calendarRecord);
         dispatch(onUpdateRecord({ ...calendarRecord, user }));

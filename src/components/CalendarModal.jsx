@@ -18,16 +18,18 @@ const customStyles = {
   },
 };
 
+const initialState = {
+  title: "",
+  notes: "",
+  category: "En Ayuno",
+  start: new Date(),
+};
+
 export const CalendarModal = () => {
   const { isDateModalOpen, closeDateModal } = useUiStore();
   const { activeRecord, startSavingRecord } = useCalendarStore();
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [formValues, setFormValues] = useState({
-    title: "",
-    notes: "",
-    category: "En Ayuno",
-    start: new Date(),
-  });
+  const [formValues, setFormValues] = useState(initialState);
   const titleClass = useMemo(() => {
     if (!isSubmitted) return "";
     return formValues.title.length > 0 ? "" : "is-invalid";
@@ -43,7 +45,7 @@ export const CalendarModal = () => {
       setFormValues({
         ...activeRecord,
       });
-    }
+    } else setFormValues(initialState);
   }, [activeRecord]);
 
   const onInputChange = ({ target }) => {
@@ -67,11 +69,10 @@ export const CalendarModal = () => {
     if (formValues.title.length <= 0 || formValues.category.length <= 0) return;
     formValues.end = formValues.start;
 
-    console.log(formValues);
-
     await startSavingRecord(formValues);
     closeDateModal();
     setIsSubmitted(false);
+    setFormValues(initialState);
   };
 
   return (
@@ -82,6 +83,7 @@ export const CalendarModal = () => {
       className="modal"
       overlayClassName="modal-fondo"
       closeTimeoutMS={200}
+      ariaHideApp={false}
     >
       <h1> Nuevo Registro </h1>
       <hr />
@@ -125,7 +127,7 @@ export const CalendarModal = () => {
             name="category"
             value={formValues.category}
           >
-            <option value="" disabled selected>
+            <option value="" disabled defaultValue={""}>
               Seleccionar una opción
             </option>
             <option value="En Ayuno">En Ayuno</option>
