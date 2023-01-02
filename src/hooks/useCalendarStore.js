@@ -15,12 +15,13 @@ export const useCalendarStore = () => {
   const dispatch = useDispatch();
   const { records, activeRecord } = useSelector((state) => state.calendar);
   const { user } = useSelector((state) => state.auth);
+  const { isDateModalOpen } = useSelector((state) => state.ui);
 
   const setActiveRecord = (calendarRecord) => {
     dispatch(onSetActiveRecord(calendarRecord));
-    // setTimeout(() => {
-    //   dispatch(onRemoveActiveRecord());
-    // }, 10000);
+    setTimeout(() => {
+      if (isDateModalOpen) dispatch(onRemoveActiveRecord());
+    }, 10000);
   };
 
   const startSavingRecord = async (calendarRecord) => {

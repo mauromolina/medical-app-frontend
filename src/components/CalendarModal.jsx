@@ -4,6 +4,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
 import "react-datepicker/dist/react-datepicker.css";
 import { useCalendarStore, useUiStore } from "../hooks";
+import Swal from "sweetalert2";
 
 registerLocale("es", es);
 
@@ -27,7 +28,8 @@ const initialState = {
 
 export const CalendarModal = () => {
   const { isDateModalOpen, closeDateModal } = useUiStore();
-  const { activeRecord, startSavingRecord } = useCalendarStore();
+  const { activeRecord, startSavingRecord, startDeletingRecord } =
+    useCalendarStore();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formValues, setFormValues] = useState(initialState);
   const titleClass = useMemo(() => {
@@ -73,6 +75,32 @@ export const CalendarModal = () => {
     closeDateModal();
     setIsSubmitted(false);
     setFormValues(initialState);
+  };
+
+  const onDeleteClick = () => {
+    Swal.fire({
+      title: "¿Estás seguro de eliminar este registro?",
+      text: "El registro no podrá ser recuperado.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar",
+      cancelButtonText: "No, cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await startDeletingRecord();
+          Swal.fire(
+            "Eliminado!",
+            "El registro se eliminó correctamente.",
+            "success"
+          );
+        } catch (err) {
+          Swal.fire("Error al eliminar.", err, "error");
+        }
+      }
+    });
   };
 
   return (
@@ -161,6 +189,16 @@ export const CalendarModal = () => {
           <i className="far fa-save"></i>
           <span> Guardar</span>
         </button>
+        {activeRecord && (
+          <button
+            type="submit"
+            className="btn btn-outline-danger btn-block"
+            onClick={onDeleteClick}
+          >
+            <i className="fas fa-remove"></i>
+            <span> Eliminar</span>
+          </button>
+        )}
       </form>
     </Modal>
   );

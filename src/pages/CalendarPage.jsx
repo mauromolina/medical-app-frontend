@@ -6,7 +6,6 @@ import {
   CalendarRecord,
   CalendarModal,
   FabAddNew,
-  FabDelete,
 } from "../components";
 
 import { getMessagesES, localizer } from "../helpers";
@@ -14,7 +13,7 @@ import { useAuthStore, useCalendarStore, useUiStore } from "../hooks";
 
 export const CalendarPage = () => {
   const { user } = useAuthStore();
-  const { openDateModal, isDateModalOpen } = useUiStore();
+  const { openDateModal, isDateModalOpen, openUpdateModal } = useUiStore();
   const { records, setActiveRecord, startLoadingRecords } = useCalendarStore();
   const [lastView, setLastView] = useState(
     localStorage.getItem("lastView") || "month"
@@ -56,14 +55,13 @@ export const CalendarPage = () => {
         components={{
           event: CalendarRecord,
         }}
-        onDoubleClickEvent={openDateModal}
+        onDoubleClickEvent={openUpdateModal}
         onSelectEvent={(e) => setActiveRecord(e)}
         onView={onViewChanged}
         eventPropGetter={recordStyleGetter}
       />
       <CalendarModal />
       <FabAddNew />
-      {!isDateModalOpen && <FabDelete />}
     </>
   );
 };
