@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import calendarApi from "../api/calendarApi";
-import { checking, cleanErrors, login, logout, onLogout } from "../store";
+import { checking, cleanErrors, login, logout, onLogout } from "../state";
 
 export const useAuthStore = () => {
   const dispatch = useDispatch();

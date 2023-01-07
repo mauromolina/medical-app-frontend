@@ -3,7 +3,7 @@ import {
   onCloseDateModal,
   onOpenDateModal,
   onRemoveActiveRecord,
-} from "../store";
+} from "../state";
 
 export const useUiStore = () => {
   const dispatch = useDispatch();

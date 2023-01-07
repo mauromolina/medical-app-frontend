@@ -9,7 +9,7 @@ import {
   onRemoveActiveRecord,
   onSetActiveRecord,
   onUpdateRecord,
-} from "../store";
+} from "../state";
 
 export const useCalendarStore = () => {
   const dispatch = useDispatch();
