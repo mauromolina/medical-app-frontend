@@ -3,6 +3,7 @@ import { useForm } from "../hooks";
 import { useAuthStore } from "../hooks";
 import Swal from "sweetalert2";
 import "./LoginPage.css";
+import { useLoginMutation, useRegisterMutation } from "../state/query/auth";
 
 const loginFormFields = {
   loginEmail: "",
@@ -31,11 +32,14 @@ export const LoginPage = () => {
     onInputChange: onRegisterInputChange,
   } = useForm(registerFormFields);
 
-  const { error, startLogin, startRegister } = useAuthStore();
+  const { error } = useAuthStore();
+
+  const [login] = useLoginMutation();
+  const [register] = useRegisterMutation();
 
   const loginSubmit = (e) => {
     e.preventDefault();
-    startLogin({ email: loginEmail, password: loginPassword });
+    login({ email: loginEmail, password: loginPassword });
   };
 
   const registerSubmit = (e) => {
@@ -44,7 +48,7 @@ export const LoginPage = () => {
       Swal.fire("Error en el registro", "Contraseñas diferentes", "error");
       return;
     }
-    startRegister({
+    register({
       name: registerName,
       email: registerEmail,
       password: registerPassword,

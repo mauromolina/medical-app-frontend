@@ -10,11 +10,13 @@ import {
 
 import { getMessagesES, localizer } from "../helpers";
 import { useAuthStore, useCalendarStore, useUiStore } from "../hooks";
+import { useGetRecordsQuery } from "../state/query/records";
 
 export const CalendarPage = () => {
   const { user } = useAuthStore();
-  const { openDateModal, isDateModalOpen, openUpdateModal } = useUiStore();
-  const { records, setActiveRecord, startLoadingRecords } = useCalendarStore();
+  const { openUpdateModal } = useUiStore();
+  const { setActiveRecord } = useCalendarStore();
+  const { data: records, error, isLoading } = useGetRecordsQuery();
   const [lastView, setLastView] = useState(
     localStorage.getItem("lastView") || "month"
   );
@@ -36,9 +38,9 @@ export const CalendarPage = () => {
     return { style };
   };
 
-  useEffect(() => {
-    startLoadingRecords();
-  }, []);
+  if (isLoading) {
+    return <span>Cargando registros...</span>;
+  }
 
   return (
     <>

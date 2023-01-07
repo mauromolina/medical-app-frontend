@@ -5,6 +5,11 @@ import es from "date-fns/locale/es";
 import "react-datepicker/dist/react-datepicker.css";
 import { useCalendarStore, useUiStore } from "../hooks";
 import Swal from "sweetalert2";
+import {
+  useAddRecordsMutation,
+  useDeleteRecordsMutation,
+  useUpdateRecordsMutation,
+} from "../state/query/records";
 
 registerLocale("es", es);
 
@@ -27,9 +32,11 @@ const initialState = {
 };
 
 export const CalendarModal = () => {
+  const [createRecord] = useAddRecordsMutation();
+  const [updateRecord] = useUpdateRecordsMutation();
+  const [deleteRecord] = useDeleteRecordsMutation();
   const { isDateModalOpen, closeDateModal } = useUiStore();
-  const { activeRecord, startSavingRecord, startDeletingRecord } =
-    useCalendarStore();
+  const { activeRecord } = useCalendarStore();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formValues, setFormValues] = useState(initialState);
   const titleClass = useMemo(() => {
@@ -71,7 +78,7 @@ export const CalendarModal = () => {
     if (formValues.title.length <= 0 || formValues.category.length <= 0) return;
     formValues.end = formValues.start;
 
-    await startSavingRecord(formValues);
+    formValues.id ? updateRecord(formValues) : createRecord(formValues);
     closeDateModal();
     setIsSubmitted(false);
     setFormValues(initialState);
@@ -90,12 +97,13 @@ export const CalendarModal = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await startDeletingRecord();
+          deleteRecord(activeRecord);
           Swal.fire(
             "Eliminado!",
             "El registro se eliminó correctamente.",
             "success"
           );
+          closeDateModal();
         } catch (err) {
           Swal.fire("Error al eliminar.", err, "error");
         }
@@ -191,7 +199,7 @@ export const CalendarModal = () => {
         </button>
         {activeRecord && (
           <button
-            type="submit"
+            type="button"
             className="btn btn-outline-danger btn-block"
             onClick={onDeleteClick}
           >
