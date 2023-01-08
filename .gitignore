@@ -27,3 +27,5 @@ dist-ssr
 *.sw?
 
 todo.md
+
+public/_redirects
