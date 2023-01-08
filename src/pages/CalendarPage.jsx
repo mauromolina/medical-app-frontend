@@ -12,7 +12,7 @@ import { getMessagesES, localizer } from "../helpers";
 import { useAuthStore, useCalendarStore, useUiStore } from "../hooks";
 import { useGetRecordsQuery } from "../state/query/records";
 
-export const CalendarPage = () => {
+const CalendarPage = () => {
   const { user } = useAuthStore();
   const { openUpdateModal } = useUiStore();
   const { setActiveRecord } = useCalendarStore();
@@ -66,3 +66,5 @@ export const CalendarPage = () => {
     </>
   );
 };
+
+export default CalendarPage;

@@ -1,35 +1,33 @@
-import { useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Navigate, Route } from "react-router-dom";
 import { Spinner } from "../components/Spinner";
+import AuthGuard from "../guards/authGuard";
 import { useAuthStore } from "../hooks";
-import { CalendarPage, LoginPage } from "../pages";
+import { PrivateRoutes, PublicRoutes, TEXTS } from "../utils/constants";
+import { RoutesWithNotFound } from "./";
+
+const Login = lazy(() => import("../pages/LoginPage"));
+const Private = lazy(() => import("./PrivateRouter"));
 
 const AppRouter = () => {
-  const { status, checkAuthToken } = useAuthStore();
-  const isAuth = status === "auth";
+  const { checkAuthToken } = useAuthStore();
 
   useEffect(() => {
     checkAuthToken();
   }, []);
 
-  if (status === "checking") return <Spinner />;
-
-  //Refactor private and public routes
-
   return (
-    <Routes>
-      {isAuth ? (
-        <>
-          <Route path="/" element={<CalendarPage />} />
-          <Route path="/*" element={<Navigate to={"/"} />} />
-        </>
-      ) : (
-        <>
-          <Route path="/auth/*" element={<LoginPage />} />
-          <Route path="/*" element={<Navigate to={"/auth/login"} />} />
-        </>
-      )}
-    </Routes>
+    <Suspense fallback={<Spinner text={TEXTS.LOADING} />}>
+      <BrowserRouter>
+        <RoutesWithNotFound>
+          <Route path="/" element={<Navigate to={PrivateRoutes.PRIVATE} />} />
+          <Route path={PublicRoutes.LOGIN} element={<Login />} />
+          <Route element={<AuthGuard />}>
+            <Route path={`${PrivateRoutes.PRIVATE}/*`} element={<Private />} />
+          </Route>
+        </RoutesWithNotFound>
+      </BrowserRouter>
+    </Suspense>
   );
 };
 

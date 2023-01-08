@@ -4,6 +4,8 @@ import { useAuthStore } from "../hooks";
 import Swal from "sweetalert2";
 import "./LoginPage.css";
 import { useLoginMutation, useRegisterMutation } from "../state/query/auth";
+import { useNavigate } from "react-router-dom";
+import { PrivateRoutes } from "../utils/constants";
 
 const loginFormFields = {
   loginEmail: "",
@@ -17,7 +19,7 @@ const registerFormFields = {
   registerConfirm: "",
 };
 
-export const LoginPage = () => {
+const LoginPage = () => {
   const {
     loginEmail,
     loginPassword,
@@ -32,10 +34,11 @@ export const LoginPage = () => {
     onInputChange: onRegisterInputChange,
   } = useForm(registerFormFields);
 
-  const { error } = useAuthStore();
+  const { error, user } = useAuthStore();
 
   const [login] = useLoginMutation();
   const [register] = useRegisterMutation();
+  const navigate = useNavigate();
 
   const loginSubmit = (e) => {
     e.preventDefault();
@@ -60,6 +63,10 @@ export const LoginPage = () => {
       Swal.fire("Error al iniciar sesión", error, "error");
     }
   }, [error]);
+
+  useEffect(() => {
+    if (user.uid) navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
+  }, [user]);
 
   return (
     <div className="container login-container">
@@ -147,3 +154,5 @@ export const LoginPage = () => {
     </div>
   );
 };
+
+export default LoginPage;
