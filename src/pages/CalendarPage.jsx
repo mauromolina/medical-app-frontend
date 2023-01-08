@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Calendar } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
@@ -16,7 +16,9 @@ export const CalendarPage = () => {
   const { user } = useAuthStore();
   const { openUpdateModal } = useUiStore();
   const { setActiveRecord } = useCalendarStore();
-  const { data: records, error, isLoading } = useGetRecordsQuery();
+  const { data: records } = useGetRecordsQuery(null, {
+    refetchOnMountOrArgChange: true,
+  });
   const [lastView, setLastView] = useState(
     localStorage.getItem("lastView") || "month"
   );
@@ -25,22 +27,19 @@ export const CalendarPage = () => {
     setLastView(e);
   };
 
-  const recordStyleGetter = (record, start, end, isSelected) => {
+  const recordStyleGetter = (record) => {
     const isMyRecord =
       user.uid === record.user._id || user.uid === record.user.uid;
 
     const style = {
-      backgroundColor: isMyRecord ? "#347cf7" : "#465660",
+      backgroundColor: "#347cf7",
       borderRadius: "0px",
       opacity: 0.8,
       color: "white",
+      display: isMyRecord ? "" : "none",
     };
     return { style };
   };
-
-  if (isLoading) {
-    return <span>Cargando registros...</span>;
-  }
 
   return (
     <>
