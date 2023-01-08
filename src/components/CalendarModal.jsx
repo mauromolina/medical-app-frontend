@@ -98,15 +98,8 @@ export const CalendarModal = () => {
       if (result.isConfirmed) {
         try {
           deleteRecord(activeRecord);
-          Swal.fire(
-            "Eliminado!",
-            "El registro se eliminó correctamente.",
-            "success"
-          );
           closeDateModal();
-        } catch (err) {
-          Swal.fire("Error al eliminar.", err, "error");
-        }
+        } catch (err) {}
       }
     });
   };

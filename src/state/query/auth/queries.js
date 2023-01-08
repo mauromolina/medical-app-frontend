@@ -59,7 +59,7 @@ const handleAuthDispatch = (dispatch, data) => {
 };
 
 const handleAuthErrorDispatch = (dispatch, err) => {
-  dispatch(logout(err.response.data.msg));
+  dispatch(logout(err));
   setTimeout(() => {
     dispatch(cleanErrors());
   }, 3000);
