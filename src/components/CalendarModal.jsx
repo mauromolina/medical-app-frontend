@@ -10,8 +10,7 @@ import {
   useDeleteRecordsMutation,
   useUpdateRecordsMutation,
 } from "../state/query/records";
-import { Spinner } from "./Spinner";
-import { useSelector } from "react-redux";
+import { confirmDeleteAlertStyle } from "./styledComponents";
 
 registerLocale("es", es);
 
@@ -34,16 +33,12 @@ const initialState = {
 };
 
 export const CalendarModal = () => {
-  const [createRecord, { isFetching: isCreating }] = useAddRecordsMutation();
-  const [updateRecord, { isFetching: isUpdating }] = useUpdateRecordsMutation();
-  const [deleteRecord, { isFetching: isDeleting }] = useDeleteRecordsMutation();
-  const isSomeQueryPending = useSelector((state) =>
-    Object.values(state.recordsQuery.queries).some(
-      (query) => query.status === "pending"
-    )
-  );
+  const [createRecord] = useAddRecordsMutation();
+  const [updateRecord] = useUpdateRecordsMutation();
+  const [deleteRecord] = useDeleteRecordsMutation();
   const { isDateModalOpen, closeDateModal } = useUiStore();
   const { activeRecord } = useCalendarStore();
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formValues, setFormValues] = useState(initialState);
   const titleClass = useMemo(() => {
@@ -79,39 +74,36 @@ export const CalendarModal = () => {
   };
 
   const onSubmit = async (e) => {
+    if (isLoading) return;
     e.preventDefault();
     setIsSubmitted(true);
 
     if (formValues.title.length <= 0 || formValues.category.length <= 0) return;
     formValues.end = formValues.start;
 
-    formValues.id ? updateRecord(formValues) : createRecord(formValues);
-    closeDateModal();
-    setIsSubmitted(false);
-    setFormValues(initialState);
+    setIsLoading(true);
+    (formValues.id ? updateRecord : createRecord)(formValues).then(() => {
+      setIsLoading(false);
+      closeDateModal();
+      setIsSubmitted(false);
+      setFormValues(initialState);
+    });
   };
 
   const onDeleteClick = () => {
-    Swal.fire({
-      title: "¿Estás seguro de eliminar este registro?",
-      text: "El registro no podrá ser recuperado.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, eliminar",
-      cancelButtonText: "No, cancelar",
-    }).then(async (result) => {
+    if (isLoading) return;
+    Swal.fire(confirmDeleteAlertStyle).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          deleteRecord(activeRecord);
-          closeDateModal();
+          setIsLoading(true);
+          deleteRecord(activeRecord).then(() => {
+            setIsLoading(false);
+            closeDateModal();
+          });
         } catch (err) {}
       }
     });
   };
-
-  if (isSomeQueryPending) return <Spinner />;
 
   return (
     <Modal
@@ -197,7 +189,7 @@ export const CalendarModal = () => {
 
         <button type="submit" className="btn btn-outline-primary btn-block">
           <i className="far fa-save"></i>
-          <span> Guardar</span>
+          <span> {isLoading ? "..." : "Guardar"}</span>
         </button>
         {activeRecord && (
           <button
@@ -206,7 +198,7 @@ export const CalendarModal = () => {
             onClick={onDeleteClick}
           >
             <i className="fas fa-remove"></i>
-            <span> Eliminar</span>
+            <span> {isLoading ? "..." : "Eliminar"}</span>
           </button>
         )}
       </form>
