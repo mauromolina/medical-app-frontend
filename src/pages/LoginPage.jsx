@@ -6,6 +6,7 @@ import "./LoginPage.css";
 import { useLoginMutation, useRegisterMutation } from "../state/query/auth";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "../utils/constants";
+import { Spinner } from "../components/Spinner";
 
 const loginFormFields = {
   loginEmail: "",
@@ -36,8 +37,8 @@ const LoginPage = () => {
 
   const { error, user } = useAuthStore();
 
-  const [login] = useLoginMutation();
-  const [register] = useRegisterMutation();
+  const [login, { isLoading: isLoadingLogin }] = useLoginMutation();
+  const [register, { isLoading: isLoadingRegister }] = useRegisterMutation();
   const navigate = useNavigate();
 
   const loginSubmit = (e) => {
@@ -67,6 +68,9 @@ const LoginPage = () => {
   useEffect(() => {
     if (user.uid) navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
   }, [user]);
+
+  if (isLoadingLogin || isLoadingRegister)
+    return <Spinner text="Iniciando sesión..." />;
 
   return (
     <div className="container login-container">

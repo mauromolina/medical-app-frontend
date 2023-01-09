@@ -10,6 +10,8 @@ import {
   useDeleteRecordsMutation,
   useUpdateRecordsMutation,
 } from "../state/query/records";
+import { Spinner } from "./Spinner";
+import { useSelector } from "react-redux";
 
 registerLocale("es", es);
 
@@ -32,9 +34,14 @@ const initialState = {
 };
 
 export const CalendarModal = () => {
-  const [createRecord] = useAddRecordsMutation();
-  const [updateRecord] = useUpdateRecordsMutation();
-  const [deleteRecord] = useDeleteRecordsMutation();
+  const [createRecord, { isFetching: isCreating }] = useAddRecordsMutation();
+  const [updateRecord, { isFetching: isUpdating }] = useUpdateRecordsMutation();
+  const [deleteRecord, { isFetching: isDeleting }] = useDeleteRecordsMutation();
+  const isSomeQueryPending = useSelector((state) =>
+    Object.values(state.recordsQuery.queries).some(
+      (query) => query.status === "pending"
+    )
+  );
   const { isDateModalOpen, closeDateModal } = useUiStore();
   const { activeRecord } = useCalendarStore();
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -103,6 +110,8 @@ export const CalendarModal = () => {
       }
     });
   };
+
+  if (isSomeQueryPending) return <Spinner />;
 
   return (
     <Modal

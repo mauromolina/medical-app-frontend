@@ -3,9 +3,10 @@
     height: 50px;
     display: grid;
     animation: s4 4s infinite;
-    /* position: absolute;
+    position: absolute;
     top: 50%;
-    left: 50%; */
+    left: 50%;
+    z-index: 100;
   }
   .custom-loader::before,
   .custom-loader::after {    
