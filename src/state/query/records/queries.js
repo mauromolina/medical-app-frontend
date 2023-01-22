@@ -1,5 +1,6 @@
 import { normalizeRecordToDate } from "../../../helpers";
 import { ENDPOINTS } from "../../api";
+import { onLoadRecords } from "../../store/calendar/calendarSlice";
 
 const endpoint = ENDPOINTS.RECORDS;
 
@@ -9,6 +10,10 @@ export const getRecordsQuery = {
   transformResponse: (response) => {
     const records = normalizeRecordToDate(response.data.records);
     return records;
+  },
+  async onQueryStarted(_args, { dispatch, queryFulfilled }) {
+    const { data: response } = await queryFulfilled;
+    dispatch(onLoadRecords(response));
   },
 };
 
